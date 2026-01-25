@@ -51,3 +51,4 @@ jobs:
           -Dsonar.projectKey=10Pearls-Contact-Management-Backend \
           -Dsonar.organization=aniqa990 \
           -Dsonar.host.url=https://sonarcloud.io
+        working-directory: backend
