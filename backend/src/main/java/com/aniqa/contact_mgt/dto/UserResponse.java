@@ -1,21 +1,20 @@
-package com.aniqa.contact_mgt.model;
+package com.aniqa.contact_mgt.dto;
+
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
 @Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-@Table(name="Contact_Phones")
-public class ContactPhones {
-    private String id;
-    private long phone;
+
+public class UserResponse {
+    private Long id;
+    private String email;
+    private String phone;
 }

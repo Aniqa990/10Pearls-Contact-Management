@@ -1,33 +1,32 @@
 package com.aniqa.contact_mgt.model;
 
+import com.aniqa.contact_mgt.model.enums.PhoneType;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name="Contact")
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
+@Getter
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class Contact {
+@Table(name="Contact_Phones")
+public class ContactPhones {
     @Id
     @UuidGenerator
     private String id;
 
-    private String first_name;
-    private String last_name;
-    private String title;
-    private String photoUrl;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
+    private String number;
+
+    @Enumerated(EnumType.STRING)
+    private PhoneType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contact_id")
+    private Contact contact;
 }
