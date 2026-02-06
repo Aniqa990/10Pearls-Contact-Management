@@ -1,6 +1,7 @@
 name: SonarCloud Scan
 on:
   push:
+  commit:
     branches:
       - main
   pull_request:
