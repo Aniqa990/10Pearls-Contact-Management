@@ -1,13 +1,14 @@
 name: SonarCloud Scan
+
 on:
   push:
-  commit:
     branches:
       - main
       - dev-branch
     paths:
       - "frontend/**"
       - ".github/workflows/frontend-pipeline.yml"
+
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
@@ -15,12 +16,14 @@ on:
     paths:
       - "frontend/**"
       - ".github/workflows/frontend-pipeline.yml"
+
   workflow_dispatch:
 
 jobs:
   sonar:
     name: SonarCloud Scan
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -43,4 +46,6 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
-        working-directory: frontend
+        with:
+          args: >
+            -Dsonar.projectBaseDir=frontend
