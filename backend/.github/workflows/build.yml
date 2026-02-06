@@ -36,6 +36,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
 
       - name: Build and analyze
+        working-directory: backend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_BACKEND }}
         run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
