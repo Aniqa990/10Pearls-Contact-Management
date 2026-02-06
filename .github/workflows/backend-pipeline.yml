@@ -18,7 +18,6 @@ on:
 jobs:
   build:
     name: Build and analyze
-    working-directory: backend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
