@@ -1,8 +1,10 @@
 name: SonarCloud Scan
 on:
   push:
+  commit:
     branches:
       - main
+      - dev-branch
     paths:
       - "frontend/**"
       - ".github/workflows/frontend-pipeline.yml"
