@@ -1,17 +1,14 @@
 package com.aniqa.contact_mgt.service;
 
-import com.aniqa.contact_mgt.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.aniqa.contact_mgt.dto.UserRegistrationLoginRequest;
+import com.aniqa.contact_mgt.dto.UserResponse;
 
-@Service
-@Slf4j
-@Transactional(rollbackOn = Exception.class) //to roll back on exceptions
-@RequiredArgsConstructor //for dependency injection
+public interface UserService {
 
-public class UserService {
-    private final UserRepository userrepo;
+    UserResponse register(UserRegistrationLoginRequest request);
+
+    UserResponse login(UserRegistrationLoginRequest request);
+
+    void changePassword(String userId, String oldPassword, String newPassword);
 
 }
