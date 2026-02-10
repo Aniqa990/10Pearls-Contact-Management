@@ -32,6 +32,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password_hash;
+    private String role;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
 

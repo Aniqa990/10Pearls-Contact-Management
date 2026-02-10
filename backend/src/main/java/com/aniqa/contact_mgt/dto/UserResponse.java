@@ -14,7 +14,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 
 public class UserResponse {
-    private Long id;
+    private String id;
     private String email;
     private String phone;
 }
