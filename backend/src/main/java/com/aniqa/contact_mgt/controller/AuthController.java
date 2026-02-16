@@ -1,6 +1,7 @@
 package com.aniqa.contact_mgt.controller;
 
-import com.aniqa.contact_mgt.dto.UserRegistrationLoginRequest;
+import com.aniqa.contact_mgt.dto.UserLoginRequest;
+import com.aniqa.contact_mgt.dto.UserRegistrationRequest;
 import com.aniqa.contact_mgt.dto.UserResponse;
 import com.aniqa.contact_mgt.service.UserService;
 import jakarta.validation.Valid;
@@ -19,10 +20,10 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(
-            @Valid @RequestBody UserRegistrationLoginRequest request
+        public ResponseEntity<UserResponse> register(
+            @Valid @RequestBody UserRegistrationRequest request
     ) {
-        log.info("API: Register user");
+        log.info("Register endpoint called for email: {}", request.getEmail());
 
         UserResponse response = userService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -30,11 +31,12 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(
-            @Valid @RequestBody UserRegistrationLoginRequest request
+            @Valid @RequestBody UserLoginRequest request
     ) {
-        log.info("API: Login user");
+        log.info("Login endpoint called for email: {}", request.getEmail());
 
         UserResponse response = userService.login(request);
         return ResponseEntity.ok(response);
     }
 }
+

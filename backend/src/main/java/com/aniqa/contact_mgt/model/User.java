@@ -21,7 +21,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(NON_DEFAULT) //if for eg id by default is null, and if id is null then that object not passed to frontend
-@Table(name="User")
+@Table(name="Users")
 public class User {
     @Id
     @UuidGenerator

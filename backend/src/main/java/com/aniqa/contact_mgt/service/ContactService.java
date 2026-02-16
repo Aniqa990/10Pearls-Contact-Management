@@ -1,6 +1,9 @@
 package com.aniqa.contact_mgt.service;
 
 import com.aniqa.contact_mgt.dto.ContactDTO;
+import com.aniqa.contact_mgt.dto.EmailDTO;
+import com.aniqa.contact_mgt.dto.PhoneDTO;
+import com.aniqa.contact_mgt.exception.ResourceNotFoundException;
 import com.aniqa.contact_mgt.mapper.ContactMapper;
 import com.aniqa.contact_mgt.model.Contact;
 import com.aniqa.contact_mgt.model.ContactEmails;
@@ -14,7 +17,6 @@ import com.cloudinary.Cloudinary;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
 import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,35 +50,48 @@ public class ContactService {
     private final Cloudinary cloudinary;
     private final ContactMapper contactMapper = Mappers.getMapper(ContactMapper.class);
 
+
     public Page<Contact> getAllContactsForUser(
             String userId,
             int page,
             int size
     ) {
+        log.info("Fetching contacts for user: {}, page: {}, size: {}", userId, page, size);
+        
+        // Verify user exists
+        userrepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
         Pageable pageable = PageRequest.of(page, size, Sort.by("first_name"));
         return contactrepo.findByUserId(userId, pageable);
     }
 
-    public Page<Contact> searchContacts(String userId, String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
 
-        return contactrepo
-                .search(
-                        userId, keyword, pageable
-                );
+    public Page<Contact> searchContacts(String userId, String keyword, int page, int size) {
+        log.info("Searching contacts for user: {}, keyword: {}, page: {}, size: {}", userId, keyword, page, size);
+        
+        // Verify user exists
+        userrepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        
+        Pageable pageable = PageRequest.of(page, size);
+        return contactrepo.search(userId, keyword, pageable);
     }
 
-
     public Contact getContact(String contactId, String userId) {
+        log.info("Fetching contact: {} for user: {}", contactId, userId);
+        
         return contactrepo.findByIdAndUserId(contactId, userId)
-                .orElseThrow(() -> new RuntimeException("Contact not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found or access denied"));
     }
 
 
     public void createContact(String userId, ContactDTO request) {
-
+        log.info("Creating new contact for user: {}", userId);
+        
+        // Verify user exists
         User user = userrepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Contact contact = contactMapper.contactDTOToContact(request);
         contact.setUser(user);
@@ -94,7 +109,6 @@ public class ContactService {
             contact.setEmailAddresses(emails);
         }
 
-        // PHONES (optional)
         if (request.getPhones() != null) {
             List<ContactPhones> phones = request.getPhones().stream()
                     .map(phonedto -> {
@@ -108,7 +122,32 @@ public class ContactService {
             contact.setPhoneNumbers(phones);
         }
 
+        // // Add emails
+        // if (request.getEmails() != null && !request.getEmails().isEmpty()) {
+        //     List<ContactEmails> emails = new ArrayList<>();
+        //     for (EmailDTO emailDTO : request.getEmails()) {
+        //         ContactEmails email = new ContactEmails();
+        //         email.setEmail(emailDTO.getEmail());
+        //         email.setType(EmailType.valueOf(emailDTO.getType().toUpperCase()));
+        //         email.setContact(contact);
+        //         emails.add(email);
+        //     }
+
+        // // Add phones
+        // if (request.getPhones() != null && !request.getPhones().isEmpty()) {
+        //     List<ContactPhones> phones = new ArrayList<>();
+        //     for (PhoneDTO phoneDTO : request.getPhones()) {
+        //         ContactPhones phone = new ContactPhones();
+        //         phone.setNumber(phoneDTO.getNumber());
+        //         phone.setType(PhoneType.valueOf(phoneDTO.getType().toUpperCase()));
+        //         phone.setContact(contact);
+        //         phones.add(phone);
+        //     }
+        //     contact.setPhoneNumbers(phones);
+        // }
+
         contactrepo.save(contact);
+        log.info("Contact created successfully with id: {}", contact.getId());
     }
 
 
@@ -117,12 +156,15 @@ public class ContactService {
             String userId,
             ContactDTO dto
     ) {
+        log.info("Updating contact: {} for user: {}", contactId, userId);
+        
         Contact c = contactrepo.findByIdAndUserId(contactId, userId)
-                .orElseThrow(() -> new RuntimeException("Contact not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found or access denied"));
 
         c.setFirst_name(dto.getFirst_name());
         c.setLast_name(dto.getLast_name());
         c.setTitle(dto.getTitle());
+        c.setPhotoUrl(dto.getPhotoUrl());
 
         if (dto.getEmails() != null) {
             List<ContactEmails> emails = dto.getEmails().stream()
@@ -137,9 +179,18 @@ public class ContactService {
             c.setEmailAddresses(emails);
         }
 
+        // c.getEmailAddresses().clear();
+        //     List<ContactEmails> emails = new ArrayList<>();
+        //     for (EmailDTO emailDTO : dto.getEmails()) {
+        //         ContactEmails email = new ContactEmails();
+        //         email.setEmail(emailDTO.getEmail());
+        //         email.setType(EmailType.valueOf(emailDTO.getType().toUpperCase()));
+        //         email.setContact(c);
+        //         emails.add(email);
+        //     }
+
         // PHONES (optional)
-        if (dto.getPhones() != null) {
-            List<ContactPhones> phones = dto.getPhones().stream()
+        if (dto.getPhones() != null) {            List<ContactPhones> phones = dto.getPhones().stream()
                     .map(phonedto -> {
                         ContactPhones phone = new ContactPhones();
                         phone.setNumber(phonedto.getNumber());
@@ -148,23 +199,45 @@ public class ContactService {
                         return phone;
                     })
                     .toList();
-            c.setPhoneNumbers(phones);
-        }
+            
+                    // Update phones
+        // if (dto.getPhones() != null) {
+        //     c.getPhoneNumbers().clear();
+        //     List<ContactPhones> phones = new ArrayList<>();
+        //     for (PhoneDTO phoneDTO : dto.getPhones()) {
+        //         ContactPhones phone = new ContactPhones();
+        //         phone.setNumber(phoneDTO.getNumber());
+        //         phone.setType(PhoneType.valueOf(phoneDTO.getType().toUpperCase()));
+        //         phone.setContact(c);
+        //         phones.add(phone);
+        //     }
+             c.setPhoneNumbers(phones);
+         }
 
-        return contactMapper.contactToContactDTO(contactrepo.save(c));
+        //return contactMapper.contactToContactDTO(contactrepo.save(c));
+        Contact updated = contactrepo.save(c);
+        log.info("Contact updated successfully with id: {}", updated.getId());
+        
+        return contactMapper.contactToContactDTO(updated);
     }
 
 
     public void deleteContact(String contactId, String userId) {
+        log.info("Deleting contact: {} for user: {}", contactId, userId);
+        
         int deleted = contactrepo.deleteByIdAndUserId(contactId, userId);
         if (deleted == 0) {
-            throw new RuntimeException("Contact not found");
+            throw new ResourceNotFoundException("Contact not found or access denied");
         }
+        
+        log.info("Contact deleted successfully");
     }
 
     public String uploadPhoto(String contactId, String userId, MultipartFile file) {
+        log.info("Uploading photo for contact: {} for user: {}", contactId, userId);
+        
         Contact contact = contactrepo.findByIdAndUserId(contactId, userId)
-                .orElseThrow(() -> new RuntimeException("Contact not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Contact not found or access denied"));
 
         try {
             Map<?, ?> uploadResult = cloudinary.uploader().upload(
@@ -176,10 +249,12 @@ public class ContactService {
             contact.setPhotoUrl(imageUrl);
             contactrepo.save(contact);
 
+            log.info("Photo uploaded successfully for contact: {}", contactId);
             return imageUrl;
 
         } catch (Exception e) {
-            throw new RuntimeException("Image upload failed");
+            log.error("Image upload failed: ", e);
+            throw new RuntimeException("Image upload failed: " + e.getMessage());
         }
     }
 
