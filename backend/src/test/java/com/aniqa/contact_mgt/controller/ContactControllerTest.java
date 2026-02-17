@@ -59,15 +59,15 @@ class ContactControllerTest {
         // test contact
         testContact = new Contact();
         testContact.setId("contact123");
-        testContact.setFirst_name("John");
-        testContact.setLast_name("Doe");
+        testContact.setFirstName("John");
+        testContact.setLastName("Doe");
         testContact.setTitle("Engineer");
         testContact.setUser(testUser);
 
         // test DTO
         testContactDTO = new ContactDTO();
-        testContactDTO.setFirst_name("John");
-        testContactDTO.setLast_name("Doe");
+        testContactDTO.setFirstName("John");
+        testContactDTO.setLastName("Doe");
         testContactDTO.setTitle("Engineer");
 
         EmailDTO emailDTO = new EmailDTO();
@@ -171,7 +171,7 @@ class ContactControllerTest {
     @WithMockUser(username = "user123")
     void testCreateContactInvalidData() throws Exception {
         ContactDTO invalidDTO = new ContactDTO();
-        invalidDTO.setLast_name("Doe");
+        invalidDTO.setLastName("Doe");
 
         mockMvc.perform(post("/api/contacts")
                         .contentType(APPLICATION_JSON)

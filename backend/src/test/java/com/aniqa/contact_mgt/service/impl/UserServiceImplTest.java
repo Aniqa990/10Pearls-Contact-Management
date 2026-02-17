@@ -1,6 +1,7 @@
 package com.aniqa.contact_mgt.service.impl;
 
-import com.aniqa.contact_mgt.dto.UserRegistrationLoginRequest;
+import com.aniqa.contact_mgt.dto.UserRegistrationRequest;
+import com.aniqa.contact_mgt.dto.UserLoginRequest;
 import com.aniqa.contact_mgt.dto.UserResponse;
 import com.aniqa.contact_mgt.exception.EmailAlreadyExistsException;
 import com.aniqa.contact_mgt.exception.InvalidCredentialsException;
@@ -43,7 +44,8 @@ class UserServiceImplTest {
     private UserServiceImpl userService;
 
     private User testUser;
-    private UserRegistrationLoginRequest testRequest;
+    private UserRegistrationRequest testRegRequest;
+    private UserLoginRequest testLoginRequest;
 
     @BeforeEach
     void setUp() {
@@ -53,9 +55,15 @@ class UserServiceImplTest {
         testUser.setPassword_hash("hashedPassword");
         testUser.setRole("USER");
 
-        testRequest = new UserRegistrationLoginRequest();
-        testRequest.setEmail("john@example.com");
-        testRequest.setPassword("password123");
+        testRegRequest = new UserRegistrationRequest();
+        testRegRequest.setEmail("john@example.com");
+        testRegRequest.setPassword("password123");
+        testRegRequest.setFirstName("John");
+        testRegRequest.setLastName("Doe");
+
+        testLoginRequest = new UserLoginRequest();
+        testLoginRequest.setEmail("john@example.com");
+        testLoginRequest.setPassword("password123");
     }
 
     // REgistration tests
@@ -64,12 +72,12 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Should register new user successfully")
     void testRegisterSuccess() {
-        when(userRepository.existsByEmail(testRequest.getEmail())).thenReturn(false);
-        when(passwordEncoder.encode(testRequest.getPassword())).thenReturn("hashedPassword");
+        when(userRepository.existsByEmail(testRegRequest.getEmail())).thenReturn(false);
+        when(passwordEncoder.encode(testRegRequest.getPassword())).thenReturn("hashedPassword");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         when(jwtTokenProvider.generateToken(testUser.getId())).thenReturn("jwtToken123");
 
-        UserResponse response = userService.register(testRequest);
+        UserResponse response = userService.register(testRegRequest);
 
         assertNotNull(response);
         assertEquals("user123", response.getId());
@@ -84,10 +92,10 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Should throw exception when email already exists")
     void testRegisterEmailAlreadyExists() {
-        when(userRepository.existsByEmail(testRequest.getEmail())).thenReturn(true);
+        when(userRepository.existsByEmail(testRegRequest.getEmail())).thenReturn(true);
 
         assertThrows(EmailAlreadyExistsException.class, () -> {
-            userService.register(testRequest);
+            userService.register(testRegRequest);
         });
 
         verify(userRepository, never()).save(any(User.class));
@@ -100,11 +108,11 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Should login successfully with correct credentials")
     void testLoginSuccess() {
-        when(userRepository.findByEmail(testRequest.getEmail())).thenReturn(Optional.of(testUser));
-        when(passwordEncoder.matches(testRequest.getPassword(), testUser.getPassword_hash())).thenReturn(true);
+        when(userRepository.findByEmail(testLoginRequest.getEmail())).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.matches(testLoginRequest.getPassword(), testUser.getPassword_hash())).thenReturn(true);
         when(jwtTokenProvider.generateToken(testUser.getId())).thenReturn("jwtToken123");
 
-        UserResponse response = userService.login(testRequest);
+        UserResponse response = userService.login(testLoginRequest);
 
         assertNotNull(response);
         assertEquals("user123", response.getId());
@@ -117,10 +125,10 @@ class UserServiceImplTest {
     @Test
     @DisplayName("Should throw exception when user not found")
     void testLoginUserNotFound() {
-        when(userRepository.findByEmail(testRequest.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(testLoginRequest.getEmail())).thenReturn(Optional.empty());
 
         assertThrows(InvalidCredentialsException.class, () -> {
-            userService.login(testRequest);
+            userService.login(testLoginRequest);
         });
     }
 
@@ -130,11 +138,11 @@ class UserServiceImplTest {
     @DisplayName("Should throw exception when password is incorrect")
     void testLoginIncorrectPassword() {
 
-        when(userRepository.findByEmail(testRequest.getEmail())).thenReturn(Optional.of(testUser));
-        when(passwordEncoder.matches(testRequest.getPassword(), testUser.getPassword_hash())).thenReturn(false);
+        when(userRepository.findByEmail(testLoginRequest.getEmail())).thenReturn(Optional.of(testUser));
+        when(passwordEncoder.matches(testLoginRequest.getPassword(), testUser.getPassword_hash())).thenReturn(false);
 
         assertThrows(InvalidCredentialsException.class, () -> {
-            userService.login(testRequest);
+            userService.login(testLoginRequest);
         });
     }
 
