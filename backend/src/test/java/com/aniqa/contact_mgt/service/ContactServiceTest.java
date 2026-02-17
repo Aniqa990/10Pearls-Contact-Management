@@ -64,13 +64,13 @@ class ContactServiceTest {
 
         testContact = new Contact();
         testContact.setId("contact123");
-        testContact.setFirst_name("John");
-        testContact.setLast_name("Doe");
+        testContact.setFirstName("John");
+        testContact.setLastName("Doe");
         testContact.setUser(testUser);
 
         testContactDTO = new ContactDTO();
-        testContactDTO.setFirst_name("John");
-        testContactDTO.setLast_name("Doe");
+        testContactDTO.setFirstName("John");
+        testContactDTO.setLastName("Doe");
         testContactDTO.setTitle("Engineer");
 
         EmailDTO emailDTO = new EmailDTO();
@@ -169,7 +169,7 @@ class ContactServiceTest {
          
         assertNotNull(result);
         assertEquals("contact123", result.getId());
-        assertEquals("John", result.getFirst_name());
+        assertEquals("John", result.getFirstName());
     }
 
     @Test

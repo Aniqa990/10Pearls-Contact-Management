@@ -44,8 +44,8 @@ class AuthControllerTest {
         testRegRequest = new UserRegistrationRequest();
         testRegRequest.setEmail("john@example.com");
         testRegRequest.setPassword("password123");
-        testRegRequest.setFirst_name("John");
-        testRegRequest.setLast_name("Doe");
+        testRegRequest.setFirstName("John");
+        testRegRequest.setLastName("Doe");
 
         testLoginRequest = new UserLoginRequest();
         testLoginRequest.setEmail("john@example.com");

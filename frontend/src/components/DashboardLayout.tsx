@@ -25,14 +25,14 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
     <div className="flex h-screen bg-gray-100">
       {/* sidebar */}
       <aside
-        className={`fixed md:static z-40 w-64 bg-gray-900 text-white h-screen overflow-y-auto transition-transform duration-300 ${
+        className={`fixed md:static z-40 w-64 bg-gradient-to-b from-purple-800 to-purple-600 text-white h-screen overflow-y-auto transition-transform duration-300 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="px-6 py-8 border-b border-gray-800">
-            <h1 className="text-2xl font-bold">Contact Manager</h1>
-            <p className="text-gray-400 text-sm mt-1">Manage Your Contacts</p>
+          <div className="px-6 py-8 flex items-center border-b border-purple-700">
+            <img src="../src/assets/connexa.png" alt="Connexa" className="h-8 w-auto mr-2" />
+            <span className="text-xl font-bold">Connexa</span>
           </div>
 
           <nav className="flex-1 px-4 py-8 space-y-2">
@@ -93,19 +93,22 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
       </aside>
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between md:justify-end">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg"
-          >
-            {sidebarOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+        <header className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-4 py-4 flex items-center justify-between md:justify-end">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="md:hidden p-2 hover:bg-purple-700 rounded-lg"
+            >
+              {sidebarOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+            <img src="../src/assets/connexa.png" alt="Connexa" className="h-12 w-auto" />
+          </div>
           <div className="hidden md:flex items-center gap-4">
-            <span className="text-gray-600">
+            <span className="text-white">
               Welcome, {user?.firstName}!
             </span>
           </div>

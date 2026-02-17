@@ -146,9 +146,12 @@ export const ContactManagementPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-purple-100 p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Contacts</h1>
-          <p className="text-gray-600 mt-1">Manage all your contacts in one place</p>
+        <div className="bg-gradient-to-r from-purple-600 to-purple-500 p-6 rounded-lg text-white flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold">Contacts</h1>
+            <p className="mt-1 text-purple-200">Manage all your contacts in one place</p>
+          </div>
+          
         </div>
 
         {error && (
