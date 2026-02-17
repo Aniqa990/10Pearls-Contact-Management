@@ -2,6 +2,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { ContactManagementPage } from '@/pages/ContactManagementPage';
+import { UserProfilePage } from '@/pages/UserProfilePage';
+import { ProtectedRoute } from '@/lib/useProtectedRoute';
+import { DashboardLayout } from '@/components/DashboardLayout';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -19,6 +23,7 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Public Routes */}
       <Route
         path="/login"
         element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />}
@@ -27,6 +32,33 @@ function AppRoutes() {
         path="/register"
         element={user ? <Navigate to="/dashboard" replace /> : <RegisterPage />}
       />
+
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <ContactManagementPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <UserProfilePage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Default Route */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }
