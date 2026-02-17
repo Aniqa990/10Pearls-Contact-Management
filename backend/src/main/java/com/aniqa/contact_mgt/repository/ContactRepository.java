@@ -24,8 +24,8 @@ public interface ContactRepository extends JpaRepository<Contact, String> {
     @Query("""
    SELECT c FROM Contact c
    WHERE c.user.id = :userId
-   AND (LOWER(c.first_name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-        OR LOWER(c.last_name) LIKE LOWER(CONCAT('%', :keyword, '%')))
+   AND (LOWER(c.firstName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(c.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')))
 """)
     Page<Contact> search(
             @Param("userId") String userId,

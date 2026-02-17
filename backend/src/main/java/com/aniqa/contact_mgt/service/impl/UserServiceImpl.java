@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
 
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setFirst_name(request.getFirst_name());
-        user.setLast_name(request.getLast_name());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
 
         user.setPassword_hash(passwordEncoder.encode(request.getPassword()));
         user.setRole("USER");  // default role for new users
@@ -55,8 +55,8 @@ public class UserServiceImpl implements UserService {
         return UserResponse.builder()
                 .id(savedUser.getId())
                 .email(savedUser.getEmail())
-                .firstName(savedUser.getFirst_name())
-                .lastName(savedUser.getLast_name())
+                .firstName(savedUser.getFirstName())
+                .lastName(savedUser.getLastName())
                 .token(token)
                 .build();
     }
@@ -86,8 +86,8 @@ public class UserServiceImpl implements UserService {
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .firstName(user.getFirst_name())
-                .lastName(user.getLast_name())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .token(token)
                 .build();
     }
@@ -124,8 +124,8 @@ public class UserServiceImpl implements UserService {
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
-                .firstName(user.getFirst_name())
-                .lastName(user.getLast_name())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .createdAt(user.getCreated_at())
                 .build();
     }

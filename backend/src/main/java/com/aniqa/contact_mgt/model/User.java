@@ -27,8 +27,8 @@ public class User {
     @UuidGenerator
     @Column(name = "id", updatable = false, unique = true)
     private String id;
-    private String first_name;
-    private String Last_name;
+    private String firstName;
+    private String lastName;
     @Column(unique = true)
     private String email;
     private String password_hash;

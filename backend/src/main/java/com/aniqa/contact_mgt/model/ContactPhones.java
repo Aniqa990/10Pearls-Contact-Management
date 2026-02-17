@@ -1,6 +1,7 @@
 package com.aniqa.contact_mgt.model;
 
 import com.aniqa.contact_mgt.model.enums.PhoneType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,5 +29,6 @@ public class ContactPhones {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contact_id")
+    @JsonIgnore
     private Contact contact;
 }

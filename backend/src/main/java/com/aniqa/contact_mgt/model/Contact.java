@@ -1,5 +1,6 @@
 package com.aniqa.contact_mgt.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,10 +26,11 @@ public class Contact {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
-    private String first_name;
-    private String last_name;
+    private String firstName;
+    private String lastName;
     private String title;
     private String photoUrl;
     private LocalDateTime created_at;

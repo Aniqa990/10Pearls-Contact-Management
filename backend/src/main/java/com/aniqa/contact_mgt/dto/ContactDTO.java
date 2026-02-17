@@ -18,10 +18,10 @@ import java.util.List;
 public class ContactDTO {
     
     @NotBlank(message = "First name is required")
-    private String first_name;
+    private String firstName;
     
     @NotBlank(message = "Last name is required")
-    private String last_name;
+    private String lastName;
     
     private String title;
     private String photoUrl;
