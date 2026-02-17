@@ -96,4 +96,5 @@ public class ContactController {
                 contactService.uploadPhoto(contactId, userId, file)
         );
     }
+}
 

@@ -62,7 +62,7 @@ public class ContactService {
         userrepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         
-        Pageable pageable = PageRequest.of(page, size, Sort.by("first_name"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by("firstName"));
         return contactrepo.findByUserId(userId, pageable);
     }
 
@@ -161,8 +161,8 @@ public class ContactService {
         Contact c = contactrepo.findByIdAndUserId(contactId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contact not found or access denied"));
 
-        c.setFirst_name(dto.getFirst_name());
-        c.setLast_name(dto.getLast_name());
+        c.setFirstName(dto.getFirstName());
+        c.setLastName(dto.getLastName());
         c.setTitle(dto.getTitle());
         c.setPhotoUrl(dto.getPhotoUrl());
 
