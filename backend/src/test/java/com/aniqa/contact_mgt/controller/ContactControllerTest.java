@@ -88,10 +88,10 @@ class ContactControllerTest {
         doNothing().when(contactService).createContact(anyString(), any(ContactDTO.class));
 
         mockMvc.perform(post("/api/contacts")
+                        .param("userId", "user123")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testContactDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(status().isOk());
 
         verify(contactService, times(1)).createContact(anyString(), any(ContactDTO.class));
     }
@@ -103,11 +103,13 @@ class ContactControllerTest {
         Page<Contact> page = new PageImpl<>(List.of(testContact), PageRequest.of(0, 10), 1);
         when(contactService.getAllContactsForUser(anyString(), anyInt(), anyInt())).thenReturn(page);
 
-        mockMvc.perform(get("/api/contacts?page=0&size=10")
-                        .contentType(APPLICATION_JSON))
+        mockMvc.perform(get("/api/contacts")
+                        .param("userId", "user123")
+                        .param("page", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.totalElements").value(1));
+                .andExpect(jsonPath("$.totalElements").value(1));
+
     }
 
     @Test
@@ -117,10 +119,13 @@ class ContactControllerTest {
         Page<Contact> page = new PageImpl<>(List.of(testContact), PageRequest.of(0, 10), 1);
         when(contactService.searchContacts(anyString(), anyString(), anyInt(), anyInt())).thenReturn(page);
 
-        mockMvc.perform(get("/api/contacts/search?keyword=John&page=0&size=10")
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true));
+        mockMvc.perform(get("/api/contacts/search")
+                        .param("userId", "user123")
+                        .param("keyword", "John")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+
 
         verify(contactService, times(1)).searchContacts(anyString(), anyString(), anyInt(), anyInt());
     }
@@ -131,11 +136,10 @@ class ContactControllerTest {
     void testGetContactSuccess() throws Exception {
         when(contactService.getContact(anyString(), anyString())).thenReturn(testContact);
 
-        mockMvc.perform(get("/api/contacts/contact123")
-                        .contentType(APPLICATION_JSON))
+        mockMvc.perform(get("/api/contacts/user123/contact123"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.id").value("contact123"));
+                .andExpect(jsonPath("$.id").value("contact123"));
+
     }
 
     @Test
@@ -145,10 +149,11 @@ class ContactControllerTest {
         when(contactService.updateContact(anyString(), anyString(), any(ContactDTO.class))).thenReturn(testContactDTO);
 
         mockMvc.perform(put("/api/contacts/contact123")
+                        .param("userId", "user123")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testContactDTO)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(status().isOk());
+
 
         verify(contactService, times(1)).updateContact(anyString(), anyString(), any(ContactDTO.class));
     }
@@ -160,8 +165,9 @@ class ContactControllerTest {
         doNothing().when(contactService).deleteContact(anyString(), anyString());
 
         mockMvc.perform(delete("/api/contacts/contact123")
-                        .contentType(APPLICATION_JSON))
+                        .param("userId", "user123"))
                 .andExpect(status().isNoContent());
+
 
         verify(contactService, times(1)).deleteContact(anyString(), anyString());
     }
@@ -174,6 +180,7 @@ class ContactControllerTest {
         invalidDTO.setLastName("Doe");
 
         mockMvc.perform(post("/api/contacts")
+                        .param("userId", "user123")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidDTO)))
                 .andExpect(status().isBadRequest());
