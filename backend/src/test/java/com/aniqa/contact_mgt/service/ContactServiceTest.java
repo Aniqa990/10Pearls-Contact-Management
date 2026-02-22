@@ -17,10 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +42,6 @@ class ContactServiceTest {
 
     @Mock
     private Cloudinary cloudinary;
-
-    @Mock
-    private ContactMapper contactMapper;
 
     @InjectMocks
     private ContactService contactService;
@@ -90,7 +84,6 @@ class ContactServiceTest {
     @DisplayName("Should create contact successfully")
     void testCreateContactSuccess() {
         when(userRepository.findById("user123")).thenReturn(Optional.of(testUser));
-        when(contactMapper.contactDTOToContact(testContactDTO)).thenReturn(testContact);
         when(contactRepository.save(any(Contact.class))).thenReturn(testContact);
 
         assertDoesNotThrow(() -> contactService.createContact("user123", testContactDTO));
@@ -113,7 +106,7 @@ class ContactServiceTest {
     @Test
     @DisplayName("Should retrieve all contacts for user with pagination")
     void testGetAllContactsForUserSuccess() {
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("firstName"));
         List<Contact> contacts = List.of(testContact);
         Page<Contact> page = new PageImpl<>(contacts, pageable, 1);
 
@@ -191,7 +184,6 @@ class ContactServiceTest {
          
         when(contactRepository.findByIdAndUserId("contact123", "user123")).thenReturn(Optional.of(testContact));
         when(contactRepository.save(any(Contact.class))).thenReturn(testContact);
-        when(contactMapper.contactToContactDTO(any(Contact.class))).thenReturn(testContactDTO);
 
          
         ContactDTO result = contactService.updateContact("contact123", "user123", testContactDTO);

@@ -34,7 +34,7 @@ public class ContactController {
     @PostMapping
     public ResponseEntity<Void> create(
             @RequestParam String userId,
-            @RequestBody ContactDTO dto
+            @Valid @RequestBody ContactDTO dto
     ) {
         contactService.createContact(userId, dto);
         return ResponseEntity.ok().build();
